@@ -12,7 +12,7 @@
 <?php
 
 $access_token = "My_Access_Token";
-$photo_count = 1;
+$photo_count = 9;
 
 $json_link = "https://api.instagram.com/v1/users/self/media/recent/?";
 $json_link .="access_token={$access_token}&count={$photo_count}";
