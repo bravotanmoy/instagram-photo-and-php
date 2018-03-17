@@ -52,26 +52,6 @@ foreach ($obj['data'] as $post){
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ?>
 
 </body>
