@@ -4,33 +4,73 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 </head>
 <body>
 
 <?php
-    function fetchData($url){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        return $result;
-    }
 
-    $result = fetchData("https://api.instagram.com/v1/users/self/media/recent/?access_token=My Access Token");
+$access_token = "My_Access_Token";
+$photo_count = 1;
 
-    $result = json_decode($result);
-    foreach ($result->data as $post) {
-        if(empty($post->caption->text)) {
-            // Do Nothing
-        }
-        else {
-            echo '<a class="instagram-unit" target="blank" href="'.$post->link.'">
-            <img src="'.$post->images->low_resolution->url.'" alt="'.$post->caption->text.'" width="100%" height="auto" />
-            <div class="instagram-desc">'.htmlentities($post->caption->text).' | '.htmlentities(date("F j, Y, g:i a", $post->caption->created_time)).'</div></a>';
-        }
-    }
+$json_link = "https://api.instagram.com/v1/users/self/media/recent/?";
+$json_link .="access_token={$access_token}&count={$photo_count}";
+
+
+$json = file_get_contents($json_link);
+$obj = json_decode(preg_replace('/("\w+"):(\d+)/', '\\1:"\\2"', $json), true);
+
+
+echo "<pre>";
+print_r($obj);
+echo "</pre>";
+
+foreach ($obj['data'] as $post){
+    $pic_text = $post['caption']['text'];
+    $pic_link = $post['link'];
+    $pic_like_count = $post['likes']['count'];
+    $pic_comment_count=$post['comments']['count'];
+    $pic_src=str_replace("http://", "https://", $post['images']['standard_resolution']['url']);
+    $pic_created_time=date("F j, Y", $post['caption']['created_time']);
+    $pic_created_time=date("F j, Y", strtotime($pic_created_time . " +1 days"));
+
+
+    echo "<div class='col-md-4 item_box'>";
+        echo "<a href='{$pic_link}' target='_blank'>";
+          echo "<img class='img-responsive photo-thumb' src='{$pic_src}' alt='{$pic_text}'>";
+        echo "</a>";
+    echo "<p>";
+    echo "<p>";
+        echo "<div style='color:#888;'>";
+            echo "<a href='{$pic_link}' target='_blank'>{$pic_created_time}</a>";
+        echo "</div>";
+    echo "</p>";
+    echo "<p>{$pic_text}</p>";
+    echo "</p>";
+    echo "</div>";
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>
 
